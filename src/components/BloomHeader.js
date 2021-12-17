@@ -1,16 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
 
-
-const LambdaHeader = () => {
+const BloomHeader = () => {
     return(
     <HeaderStyle>
-      <img width="40" src="https://i.ibb.co/8cX51NC/Lambda-Logo-Red.png"/>
       <div>Sprint Challenge 3.3</div>
     </HeaderStyle>);
 }
 
-export default LambdaHeader;
+export default BloomHeader;
 
 const HeaderStyle = styled.nav`
   padding: 0.5em;

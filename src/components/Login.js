@@ -1,66 +1,74 @@
-import React from 'react';
+import axios from 'axios';
+import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 import styled from 'styled-components';
-import { axiosWithAuth } from '../utils'
 
-class Login extends React.Component {
-    state = {
-        credentials: {
+const Login = () => {
+    const [details, setDetails] = useState({
             username: '',
-            password: ''
-        }
-    }
+            password: '',
+            error: null
+    });
 
-    handleChange = e => {
-        this.setState({
-            credentials: {
-                ...this.state.credentials,
-                [e.target.name]: e.target.value
-            }
+    const { push } = useHistory();
+
+    const handleChange = e => {
+        setDetails({
+            ...details,
+            [e.target.name]: e.target.value
         })
     }
 
-login = e => {
+    const handleSubmit = (e) => {
         e.preventDefault();
-
-        axiosWithAuth().post("http://localhost:5000/api/login", this.state.credentials)
+        axios.post(`http://localhost:5000/api/login`, details)
             .then(res => {
-                localStorage.setItem("token", res.data.token);
-               
-                this.props.history.push('/View');
+                const { token, role, username } = res.data;
+                localStorage.setItem('Token', token);
+                localStorage.setItem('Role', role);
+                localStorage.setItem('Username', username);
+                push('/view')
             })
-            .catch(err => 
-                console.log(err.response.data.error));
-           
-    };
-    render() {
-    return(<ComponentContainer>
+            .catch(err => {
+                return (
+                    setDetails({ 
+                    ...details, 
+                        error : err.response.data.error})
+                )
+             })
+    }
+    return(
+    <ComponentContainer>
         <ModalContainer>
             <h1>Welcome to Blogger Pro</h1>
             <h2>Please enter your account information.</h2>
-
-            <div>
-        <form onSubmit={this.login}>
-          <input
-            type="text"
-            name="username"
-            id="username"
-            value={this.state.credentials.username}
-            onChange={this.handleChange}
-          />
-          <input
-            type="password"
-            name="password"
-            id="password"
-            value={this.state.credentials.password}
-            onChange={this.handleChange}
-          />
-          <button onClick={this.login} id="submit">Log in</button>
-        </form>
-      </div>
-
+           
+            <FormGroup  onSubmit={handleSubmit}>
+                <input
+                    type ='text'
+                    name = 'username'
+                    placeholder = 'username'
+                    id = 'username'
+                    value = {details.username}
+                    onChange = {handleChange}
+                    />
+                <input 
+                    type ='password'
+                    name = 'password'
+                    id = 'password'
+                    placeholder ='password'
+                    value = {details.password}
+                    onChange = {handleChange}
+                />
+                <input 
+                    type = 'submit'
+                    name = 'submit'
+                    id = 'submit'
+               />
+            <p id='error'> {details.error}  </p>
+            </FormGroup>
         </ModalContainer>
-    </ComponentContainer>); 
-    }
+    </ComponentContainer>);
 }
 
 export default Login;
@@ -78,6 +86,11 @@ const ComponentContainer = styled.div`
     justify-content: center;
     align-items: center;
     display:flex;
+    color: black;
+
+    p{
+        color: red;
+    }
 `
 
 const ModalContainer = styled.div`
