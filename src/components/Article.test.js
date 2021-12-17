@@ -77,5 +77,6 @@ test('executes handleDelete when the delete button is pressed', async ()=> {
 
     await expect(mockDelete).toBeCalled();
 });
+
 //Task List:
 //1. Complete all above tests. Create test article data when needed.
